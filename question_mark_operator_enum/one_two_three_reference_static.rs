@@ -1,13 +1,13 @@
-type IncResult<'scope, T>= Result<&'scope T, &'static str>;
-trait Inc<'scope> {
-    fn inc(&self) -> IncResult<'scope, Self>;//Result<&'scope Self, &'static str>;
+type IncResult<T>= Result<&'static T, &'static str>;
+trait Inc {
+    fn inc(&self) -> IncResult<Self>;
 }
 
 #[derive(Debug)]
 enum OneTwoThree {ONE, TWO, THREE}
-type OneTwoThreeResult= IncResult<'static, OneTwoThree>;
+type OneTwoThreeResult= IncResult<OneTwoThree>;
 
-impl Inc<'static> for OneTwoThree {
+impl Inc for OneTwoThree {
     fn inc(&self) -> OneTwoThreeResult {
         match self {
             OneTwoThree::ONE => Ok(&OneTwoThree::TWO),

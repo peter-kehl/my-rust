@@ -11,7 +11,7 @@ impl Inc for OneTwoThree {
         match self {
             OneTwoThree::ONE => Ok(&OneTwoThree::TWO),
             OneTwoThree::TWO => Ok(&OneTwoThree::THREE),
-            OneTwoThree::THREE => Err("Overflown 3"),
+            OneTwoThree::THREE => Err("Overflown 3"), // intentional separation between THREE and MORE
             OneTwoThree::MORE(i) => if i<&std::i32::MAX {
                 Ok( &OneTwoThree::MORE(i+1) )
             }
