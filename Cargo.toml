@@ -1,7 +1,10 @@
 [package]
-name = "rust"
-version = "0.1.0"
 authors = ["Peter Kehl <peter.kehl@gmail.com>"]
 edition = "2018"
-
+name = "rust"
+version = "0.1.0"
 [dependencies]
+lazy_static = "1.4.0"
+rand = "0.8"
+serde = "*"
+serde_json = "*"

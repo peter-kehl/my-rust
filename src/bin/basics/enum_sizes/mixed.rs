@@ -14,4 +14,6 @@ fn main() {
     assert!(single==Mixed::SINGLE);
     let one=mixed(1);
     println!("{} {}", std::mem::size_of_val(&single), std::mem::size_of_val(&one) ); // -> 8 and 8 bytes
+
+    
 }
