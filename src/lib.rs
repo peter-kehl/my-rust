@@ -5,6 +5,22 @@ use std::vec::Vec;
 mod algorithms;
 mod serde_example;
 
+trait SubCollect {
+    type Item;
+
+    fn collect<B>(&self) -> B
+    where
+        B: FromIterator<Self::Item>;
+}
+
+pub trait FromIterator<A> {
+    fn from_iter<T>(iter: T) -> Self
+    where
+        T: IntoIterator<Item = A>;
+}
+
+trait Outer<T: Clone + Copy, const N: usize> {}
+
 trait SliceIterable<T: Default> {
     fn iter<'a>(&'a self) -> core::slice::Iter<'a, T>;
 }
@@ -36,42 +52,42 @@ pub fn fxx() {}
 mod tests {
     use core::mem::MaybeUninit;
 
-    trait Slice<T: Clone> {
+    trait SliceTrait<T: Clone> {
         fn from(value: T) -> Self;
     }
 
-    
-    /// Why don't we name this `SliceImpl` and why don't we rename `SliceImpl` 
-    /// to `SliceImplCopy`? Yes, it could be less typing, because usertypes
-    /// that are not `Copy` are more common. However, it could lead to laziness/
-    /// not noticing/forgetting to use `SliceImplCopy` whenever possible.
+    /// Why don't we call this trait `Slice` instead of `Slice` and why don't we
+    /// rename the existing `Slice`
+    /// to `SliceCopy`? Yes, it could be less typing, because usertypes
+    /// that are not `Copy` are more common). However, it could lead to laziness/
+    /// not noticing/forgetting to use `SliceCopy` whenever possible.
     /// Especially so because then any `Copy` type could be stored in either
-    /// `SliceImpl` or `SliceImplCopy`. Storing `Copy` in Clone-friendly
+    /// `Slice` or `SliceCopy`. Storing `Copy` in Clone-friendly
     /// storage would work, but it would be less efficient than storing it in a
     /// specialized `Copy` storage. Even more so with default values (which, if
     /// primitive and if stored in specialized `Copy` storage, could be
     /// optimized away - so the
     /// memory wouldn't be used until written to it later).
-    /// However, if we have `SliceImpl` work for `Copy` only, then it's unlikely
+    /// However, if we have `Slice` work for `Copy` only, then it's unlikely
     /// anyone would use it for `Clone` types (even though they could). And we
-    /// have `SliceImplClone` for `Clone` types.
-    struct SliceImpl<T: Copy, const N: usize> {
+    /// have `SliceClone` for `Clone` types.
+    struct Slice<T: Copy, const N: usize> {
         _arr: [T; N],
     }
-    struct SliceImplClone<T: Clone, const N: usize> {
+    struct SliceClone<T: Clone, const N: usize> {
         _arr: [T; N],
     }
     /// x
     /// xDefault or xDef
     /// xClone
-    /// xCloneDefault or xClondeDef
+    /// xCloneDefault or xCloneDef
     /// - self.arr = Default::default()
-    impl <T: Copy, const N: usize> Slice<T> for SliceImpl<T, N> {
+    impl<T: Copy, const N: usize> SliceTrait<T> for Slice<T, N> {
         fn from(_value: T) -> Self {
             todo!() // MaybeUninit
         }
     }
-    impl <T: Clone, const N: usize> Slice<T> for SliceImplClone<T, N> {
+    impl<T: Clone, const N: usize> SliceTrait<T> for SliceClone<T, N> {
         fn from(_value: T) -> Self {
             todo!() // MaybeUninit
         }
@@ -181,8 +197,6 @@ mod tests {
 
     /// TO TRY:
     /// SliceStorage { ArrayCopy(...), ArrayClone(...)}
-
-
 
     fn test_cloneable_for_array() {
         let copy = <char as CloneableForArray>::array_from_value::<4>(&'a');
