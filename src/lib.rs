@@ -4,6 +4,7 @@ use std::vec::Vec;
 
 mod algorithms;
 mod serde_example;
+mod const_generics_default_macros;
 
 trait SubCollect {
     type Item;
